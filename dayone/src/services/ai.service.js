@@ -9,7 +9,7 @@ const client = new OpenAI({
 const askAi = async(prompt)=>{
     console.log("key",process.env.OPEN_API_KEY)
     const response = await client.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: 'gpt-3.5-turbo',
         messages: prompt 
     })
 
