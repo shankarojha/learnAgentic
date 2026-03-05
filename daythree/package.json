@@ -1,0 +1,18 @@
+{
+  "name": "agenticweather",
+  "version": "1.0.0",
+  "description": "tools used with agent",
+  "license": "ISC",
+  "author": "shankarojha",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "node-fetch": "^3.3.2",
+    "openai": "^6.25.0",
+    "readline": "^1.3.0"
+  }
+}
