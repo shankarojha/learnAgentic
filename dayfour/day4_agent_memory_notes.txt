@@ -1,0 +1,156 @@
+Day 4 — Agent Memory (Agentic AI with JavaScript)
+
+1.  Why Agents Need Memory
+
+Without memory:
+
+User: My name is Shankar Agent: Nice to meet you!
+
+User: What is my name? Agent: I don’t know
+
+Because every request is independent.
+
+Memory allows the agent to: - remember conversations - remember user
+preferences - maintain context across turns - behave like a real
+assistant
+
+Memory types used in production:
+
+Short Term Memory : Current conversation Long Term Memory : Persistent
+storage Semantic Memory : Vector search Episodic Memory : Past
+interactions
+
+2.  Architecture
+
+User ↓ CLI ↓ Agent ↓ Memory Manager ↓ OpenAI API
+
+3.  Production Folder Structure
+
+day4-memory-agent │ ├── agent.js ├── memory.js ├── cli.js └── config.js
+
+4.  Memory Manager (memory.js)
+
+export class Memory { constructor() { this.history = [ { role: “system”,
+content: “You are a helpful AI assistant” } ]; }
+
+addMessage(role, content) { this.history.push({ role, content }); }
+
+getHistory() { return this.history; } }
+
+5.  OpenAI Configuration (config.js)
+
+import OpenAI from “openai”; import dotenv from “dotenv”;
+
+dotenv.config();
+
+export const client = new OpenAI({ apiKey: process.env.OPEN_API_KEY });
+
+6.  Agent Implementation (agent.js)
+
+import { client } from “./config.js”;
+
+export class Agent {
+
+constructor(memory) { this.memory = memory; }
+
+async run(userInput) {
+
+    this.memory.addMessage("user", userInput);
+
+    const response = await client.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: this.memory.getHistory()
+    });
+
+    const message = response.choices[0].message.content;
+
+    this.memory.addMessage("assistant", message);
+
+    return message;
+
+} }
+
+7.  CLI Interface (cli.js)
+
+import readline from “readline”; import { Agent } from “./agent.js”;
+import { Memory } from “./memory.js”;
+
+const rl = readline.createInterface({ input: process.stdin, output:
+process.stdout });
+
+const memory = new Memory(); const agent = new Agent(memory);
+
+function chat() {
+
+rl.question(“You:”, async (input) => {
+
+    if (input === "exit") {
+      rl.close();
+      return;
+    }
+
+    const response = await agent.run(input);
+
+    console.log("Agent:", response);
+
+    chat();
+
+}); }
+
+chat();
+
+8.  Running the Agent
+
+node cli.js
+
+Example conversation:
+
+You: My name is Shankar Agent: Nice to meet you Shankar.
+
+You: What is my name? Agent: Your name is Shankar.
+
+9.  How Memory Works Internally
+
+Step-by-step:
+
+User input ↓ memory.addMessage(“user”) ↓ history sent to LLM ↓ LLM
+generates response ↓ memory.addMessage(“assistant”) ↓ history grows
+
+Example history:
+
+[ system: You are assistant user: Hello assistant: Hi! user: My name is
+Shankar assistant: Nice to meet you]
+
+10. Production Problem
+
+Memory keeps growing and may exceed token limits.
+
+Solutions used in production:
+
+Sliding Window Memory : Keep last N messages Summarization Memory :
+Compress older messages Vector Database Memory : Long term recall Redis
+Session Memory : Store conversations
+
+11. Memory Size Limiting (Best Practice)
+
+const MAX_HISTORY = 10;
+
+addMessage(role, content) {
+
+this.history.push({ role, content });
+
+if (this.history.length > MAX_HISTORY) { this.history.splice(1, 1); } }
+
+This keeps: - system message - last 9 messages
+
+12. What You Learned
+
+-   Conversation memory
+-   Memory manager class
+-   Agent architecture
+-   Context preservation
+-   Production memory strategies
+
+Next Step (Day 5)
+
+Persistent Memory Agent using Redis.
