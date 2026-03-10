@@ -7,7 +7,7 @@ Day 2 - Prompt Engineering Fundamentals - 04/03/2026
 Day 3 - Tool Calling Agents - 05/03/2026
 Day 4 - In‑Memory Conversation Memory - 06/03/2026
 Day 5 - Persistent Memory with Redis - 07/03/2026
-Day 6 - Planning Agents (Task Decomposition) 
+Day 6 - Planning Agents (Task Decomposition) 10/03/2026
 Day 7 - ReAct Architecture (Think‑Act‑Observe) 
 Day 8 - Dynamic Tool Selection 
 Day 9 - Multi‑Tool Agents 

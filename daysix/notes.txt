@@ -1,0 +1,360 @@
+DAY 6 – PLANNING AGENTS (TASK DECOMPOSITION)
+
+---
+
+CONCEPT
+
+Planning agents break complex tasks into smaller steps and execute them sequentially.
+
+Instead of solving a problem in one step, the agent first creates a plan and then executes each step.
+
+This technique is called Task Decomposition.
+
+Used in modern AI agents such as:
+AutoGPT
+LangChain Agents
+CrewAI
+OpenAI Assistants
+
+---
+
+WHY PLANNING AGENTS ARE NEEDED
+
+Example user request:
+
+"Find the weather in Delhi, convert it to Fahrenheit, and summarize it."
+
+This cannot be solved in a single action.
+
+The agent must perform multiple steps:
+
+1. Get weather data
+2. Extract the temperature
+3. Convert temperature to Fahrenheit
+4. Summarize the result
+
+The LLM acts as a planner that decides the steps required.
+
+---
+
+AGENT ARCHITECTURE
+
+User Input
+|
+v
+Planner (LLM)
+|
+v
+Step List
+|
+v
+Executor
+|
+v
+Tools
+|
+v
+Final Result
+
+Planner decides WHAT to do.
+Executor decides HOW to do it.
+
+---
+
+FOLDER STRUCTURE
+
+src
+|-- agent
+|     |-- planner.js
+|     |-- executor.js
+|     |-- agent.js
+|
+|-- tools
+|     |-- weatherTool.js
+|     |-- mathTool.js
+|
+|-- utils
+|     |-- client.js
+|
+|-- index.js
+
+---
+
+PLANNER
+
+The planner generates a step-by-step plan using the LLM.
+
+Example
+
+User Input:
+Get weather of Delhi and convert it to Fahrenheit
+
+Planner Output:
+
+[
+"Get weather of Delhi",
+"Convert temperature to Fahrenheit"
+]
+
+Important:
+The planner only generates the steps.
+It does NOT execute anything.
+
+---
+
+EXECUTOR
+
+The executor receives each step and decides which tool to run.
+
+Example logic:
+
+If step contains "weather"
+call weatherTool()
+
+If step contains "convert"
+call mathTool()
+
+Executor responsibilities:
+
+1. Execute steps sequentially
+2. Call appropriate tools
+3. Return results to the agent
+
+---
+
+AGENT FLOW
+
+1. Receive user input
+2. Send input to planner
+3. Planner creates a list of steps
+4. Loop through each step
+5. Executor runs the step
+6. Tools return results
+7. Agent collects results
+8. Final output is returned
+
+---
+
+EXAMPLE EXECUTION
+
+User Input:
+Get weather in Delhi and convert temperature to Fahrenheit
+
+Planner Output:
+
+Step 1: Get weather in Delhi
+Step 2: Convert temperature to Fahrenheit
+
+Execution:
+
+Running Step 1
+Result: Weather in Delhi is 25°C
+
+Running Step 2
+Result: 77°F
+
+---
+
+TOOLS USED
+
+weatherTool.js
+
+Purpose:
+Fetch weather information for a city.
+
+Example output:
+Weather in Delhi is 25°C
+
+mathTool.js
+
+Purpose:
+Perform mathematical calculations.
+
+Example:
+25 * 9/5 + 32 = 77
+
+---
+
+KEY IDEA
+
+Planner = decides WHAT to do
+Executor = decides HOW to do it
+
+---
+
+PRODUCTION IMPROVEMENTS
+
+Real-world AI agents are more advanced than the basic planner-executor system.
+
+Production systems include the following improvements.
+
+---
+
+1. DYNAMIC TOOL SELECTION
+
+Instead of hardcoding tool logic like:
+
+if(step.includes("weather"))
+
+The LLM chooses the correct tool automatically.
+
+Example:
+
+Available Tools:
+
+* weatherTool
+* mathTool
+* searchTool
+
+The LLM decides which tool to call based on the step.
+
+Benefits:
+More flexible
+Easier to scale
+Supports many tools
+
+---
+
+2. CONTEXT PASSING BETWEEN STEPS
+
+Results from earlier steps are passed to later steps.
+
+Example:
+
+Step 1
+Get weather in Delhi
+
+Output
+Temperature = 25°C
+
+Step 2
+Convert 25°C to Fahrenheit
+
+Output
+77°F
+
+Without passing context, the agent cannot perform multi-step reasoning.
+
+---
+
+3. REPLANNING (ERROR RECOVERY)
+
+If a step fails, the agent should re-plan.
+
+Example
+
+Step 1
+Search weather API
+
+Error
+API unavailable
+
+Agent reaction
+Create new plan
+
+New Plan:
+
+1. Use backup weather API
+2. Get weather data
+3. Continue execution
+
+This makes the agent robust.
+
+---
+
+4. MEMORY
+
+Agents remember previous tasks and results.
+
+Example memory storage:
+
+User previously asked:
+Weather in Delhi yesterday
+
+Agent stores:
+City = Delhi
+
+Later user asks:
+Convert yesterday's temperature to Fahrenheit
+
+Agent retrieves stored memory.
+
+Memory types used in production agents:
+
+Short-term memory
+Conversation context
+
+Long-term memory
+Vector databases such as:
+Pinecone
+Weaviate
+Chroma
+Redis Vector
+
+---
+
+5. PLAN VALIDATION
+
+Before execution, agents may validate the plan.
+
+Example validation checks:
+
+Are steps logical?
+Are required tools available?
+Are steps in correct order?
+
+If validation fails, the planner generates a better plan.
+
+---
+
+MENTAL MODEL
+
+User Request
+|
+v
+Planner (LLM)
+|
+v
+Step List
+|
+v
+Executor Loop
+|
+v
+Tools
+|
+v
+Results
+|
+v
+Final Response
+
+---
+
+WHAT YOU LEARNED IN DAY 6
+
+Task decomposition
+Planner architecture
+Executor pattern
+Multi-step reasoning
+Tool execution pipelines
+Production-level agent improvements
+
+---
+
+NEXT (DAY 7)
+
+ReAct Agents
+
+ReAct = Reason + Act
+
+Agent reasoning loop:
+
+Thought
+Action
+Observation
+Thought
+Action
+Observation
+
+This architecture is widely used in production AI agents.
